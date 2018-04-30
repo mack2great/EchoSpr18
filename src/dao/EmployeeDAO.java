@@ -44,14 +44,14 @@ public class EmployeeDAO {
         } 
     }
     
-    public void addEmployee(int eID, String ln, String fn) throws Exception {
+    public void addEmployee(Employee employee) throws Exception {
         PreparedStatement statement = null;
 
         try {
             statement = conn.prepareStatement("insert into employee values (?, ?, ?)");
-            statement.setInt(1, eID);
-            statement.setString(2, ln);
-            statement.setString(3, fn);
+            statement.setInt(1, employee.getEID());
+            statement.setString(2, employee.getFirstName());
+            statement.setString(3, employee.getLastName());
             statement.executeUpdate();
         } finally {
             conn.close(statement, null);
@@ -60,15 +60,17 @@ public class EmployeeDAO {
     
     public void updateEmployee(Employee employee)throws Exception{
        PreparedStatement statement = null;
-       String comand = "update employee"
-                  + "set EID = ?,"
+       String comand = "update employee "                  
                   + "set last_name = ?,"
-                  + "set first_name = ?,";
+                  + "first_name = ?"
+                  + "where EID = ?";
+
        try{
            statement = conn.prepareStatement(comand);
-           statement.setInt(1, employee.getEID());
+
+           statement.setString(1, employee.getFirstName());
            statement.setString(2, employee.getLastName());
-           statement.setString(3, employee.getFirstName());
+           statement.setInt(3, employee.getEID());
            statement.execute();
        }
        finally{
@@ -95,6 +97,19 @@ public class EmployeeDAO {
         String fname = results.getString("first_name");
         
         return new Employee (employeeID, lname, fname);
+    }
+    public List comboValues () throws Exception{
+            List list = new ArrayList<>();
+            String employees;
+            Statement statement;
+            ResultSet resultSet;
+            statement = conn.createStatement();
+            resultSet = statement.executeQuery("select * from employee");
+              while(resultSet.next()){
+                employees= resultSet.getString("EID");
+                list.add(employees);
+              }
+        return list;
     }
     
     
